@@ -1,0 +1,17 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>{{title}}</title>
+    </head>
+    <body>
+        <h1>{{heading}}</h1>
+        <p>{{paragraph}}</p>
+        <p>{{eMail}}様を登録しました。<br>
+            {{eMail}}宛てに登録情報をお送りいたしましたのでご確認ください。<br>
+            以下のリンクからログインしてください。
+        </p>
+        <a href="{% url index %}">トップページへ</a><br>
+    </body>
+</html>

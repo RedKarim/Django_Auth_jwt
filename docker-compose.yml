@@ -1,0 +1,41 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=user_manage_dv
+      - DB_USER=web_weavers
+      - DB_PASSWORD=c6SrEGYv
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DJANGO_SETTINGS_MODULE=user_manage.settings # Add this line
+    command: python manage.py runserver 0.0.0.0:8000 # Add this line
+
+  db:
+    image: mariadb:10.5
+    container_name: mariadb_container
+    environment:
+      - MYSQL_DATABASE=user_manage_dv
+      - MYSQL_USER=web_weavers
+      - MYSQL_PASSWORD=c6SrEGYv
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./user_tbl.sql:/docker-entrypoint-initdb.d/user_tbl.sql # Add this line
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpassword
+    depends_on:
+      - db
+
+volumes:
+  db_data:

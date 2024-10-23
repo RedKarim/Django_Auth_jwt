@@ -1,0 +1,19 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>{{title}}</title>
+    </head>
+    <body>
+        <h1>{{heading}}</h1>
+        <p>{{paragraph}}</p>
+        <form action="{% url regist_email %}" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="メールアドレスの登録">
+        </form>
+        <p>{{message|safe}}</p>
+        <a href="{% url 'index' %}">トップページへ</a>
+    </body>
+</html>

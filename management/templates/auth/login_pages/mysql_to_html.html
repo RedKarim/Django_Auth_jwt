@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{title}}</title>
+  </head>
+  <body>
+    <h1>{{heading}}</h1>
+    <p>{{paragraph}}</p>
+    <p>{{eMail}}様のページです。</p>
+    <a href="{% url mysql_to_html %}">データベースのデータを表示</a>
+    <p>{{rows|safe}}</p>
+    {% comment %} HTMLにPytho変数を埋め込むときは、{{ }}を使います。 {%
+    endcomment %}
+    <table border="1">
+      <tr>
+        <th>メールアドレス</th>
+        <th>パスワード</th>
+      </tr>
+      {% for row in rows %}
+      <tr>
+        {% for val in row %}
+        <td>{{ val }}</td>
+        {% endfor %} {% comment %}
+        HTMLコード内は、インデントがあいまいなのでforの終わりを書きます。 {%
+        endcomment %}
+      </tr>
+      {% endfor %}
+    </table>
+    <a href="{% url logout %}">ログアウト</a>
+  </body>
+</html>
