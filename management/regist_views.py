@@ -161,7 +161,7 @@ class RegistPassView(TemplateView):
       message = 'セキュリティコードは、以下になります。\n' + \
                 'セキュリティコード：' + security_code
       # メールの送信者(実際は、スパムメール等を防ぐためにGmailアドレスに置き換えて送信されます。)
-      from_email = 'aamvi110@gmail.com'
+      from_email = 'hack2024team5@gmail.com'
       # メールの送信先
       to = request.session['eMail']
       # メールの送信
@@ -249,7 +249,7 @@ class RegistSecurityCodeView(TemplateView):
                 '登録された覚えがない場合は、以下までメールをお願いいたします。\n\n' + \
                 '----------------- nisisaka@kamei.ac.jp ----------------'
       # メールの送信者(実際は、スパムメール等を防ぐためにGmailアドレスに置き換えて送信されます。)
-      from_email = 'aamvi110@gmail.com'
+      from_email = 'hack2024team5@gmail.com'
       # メールの送信先
       to = request.session['eMail']
       # メールの送信
