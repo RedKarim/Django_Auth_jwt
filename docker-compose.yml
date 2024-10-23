@@ -30,8 +30,8 @@ services:
       - "8080:80"
     environment:
       - PMA_HOST=db
-      - PMA_USER=web_weavers
-      - PMA_PASSWORD=c6SrEGYv
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpassword
     depends_on:
       - db
 
