@@ -6,6 +6,9 @@ import MySQLdb
 import random
 from django.core.mail import send_mail
 from datetime import datetime
+import jwt
+from datetime import datetime, timedelta
+from django.conf import settings
 
 class TopView(TemplateView):
   def __init__(self):
@@ -242,14 +245,19 @@ class LoginSecurityCodeView(TemplateView):
       # バッファのデータをデータベースにコミットする
       connection.commit()
 
-      self.params = {
-        'title':'ページ１',
-        'heading':'ページ１',
-        'paragraph':'ユーザ認証後のページ１',
-        'page1':'page1',
-        'mysql_to_html':'mysql_to_html',
+      payload = {
+        'email': request.session['eMail'],
+        'exp': datetime.utcnow() + timedelta(days=1)  # Token expires in 1 day
       }
-      self.params['eMail'] =  request.session['eMail']
-      # 接続を閉じる
+      token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+            
+      self.params = {
+        'title': 'Login Successful',
+        'heading': 'Login Successful',
+        'paragraph': 'JWT token has been generated',
+        'token': token
+      }
+            
+      # Close the connection
       connection.close()
-      return render(request, 'auth/login_pages/login_page1.html' , self.params)
+      return render(request, 'auth/login_success.html', self.params)
