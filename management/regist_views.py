@@ -247,7 +247,7 @@ class RegistSecurityCodeView(TemplateView):
                 'メールアドレス：' +  request.session['eMail'] + '\n' + \
                 'パスワード：登録時のパスワードでご利用ください。\n\n' + \
                 '登録された覚えがない場合は、以下までメールをお願いいたします。\n\n' + \
-                '----------------- nisisaka@kamei.ac.jp ----------------'
+                '-----------------hack2024team5@gmail.com ----------------'
       # メールの送信者(実際は、スパムメール等を防ぐためにGmailアドレスに置き換えて送信されます。)
       from_email = 'hack2024team5@gmail.com'
       # メールの送信先
