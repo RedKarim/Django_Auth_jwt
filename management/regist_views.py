@@ -5,6 +5,103 @@ from .regist_forms import RegistEmailForm , RegistPassForm , RegistSecurityCodeF
 import MySQLdb
 import random
 from django.core.mail import send_mail
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import RegistrationSerializer, SecurityCodeSerializer, TokenSerializer
+import MySQLdb
+import random
+from django.core.mail import send_mail
+import jwt
+from django.conf import settings
+from datetime import datetime, timedelta
+from .serializers import RegistrationSerializer, SecurityCodeSerializer, TokenSerializer
+
+class RegistrationAPIView(APIView):
+    def post(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        connection = MySQLdb.connect(
+            host='db',
+            user='root',
+            passwd='team5',
+            db='jmandpf_sns_db'
+        )
+        cursor = connection.cursor()
+
+        # Check if email already exists
+        sql = "SELECT email FROM user_tbl WHERE email = %s"
+        cursor.execute(sql, (email,))
+        if cursor.fetchone():
+            connection.close()
+            return Response({"error": "Email already registered"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Insert new user
+        sql = "INSERT INTO user_tbl (email, passwd) VALUES (%s, %s)"
+        cursor.execute(sql, (email, password))
+        connection.commit()
+
+        # Generate and save security code
+        security_code = ''.join([str(random.randint(0,9)) for _ in range(7)])
+        sql = "UPDATE user_tbl SET security_code = %s WHERE email = %s"
+        cursor.execute(sql, (security_code, email))
+        connection.commit()
+
+        # Send security code via email
+        subject = 'Registration Security Code'
+        message = f'Your security code is: {security_code}'
+        from_email = 'hack2024team5@gmail.com'
+        recipient_list = [email]
+        send_mail(subject, message, from_email, recipient_list)
+
+        connection.close()
+        return Response({"message": "Security code sent"}, status=status.HTTP_200_OK)
+
+class VerifyRegistrationAPIView(APIView):
+    def post(self, request):
+        serializer = SecurityCodeSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+        security_code = serializer.validated_data['security_code']
+
+        connection = MySQLdb.connect(
+            host='db',
+            user='root',
+            passwd='team5',
+            db='jmandpf_sns_db'
+        )
+        cursor = connection.cursor()
+
+        # Check if the security code is correct
+        sql = "SELECT * FROM user_tbl WHERE email = %s AND security_code = %s"
+        cursor.execute(sql, (email, security_code))
+        user = cursor.fetchone()
+
+        if not user:
+            connection.close()
+            return Response({"error": "Invalid security code"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Clear the security code and set auth_regist_flag
+        sql = "UPDATE user_tbl SET security_code = NULL, auth_regist_flag = 1 WHERE email = %s"
+        cursor.execute(sql, (email,))
+        connection.commit()
+
+        # Generate JWT token
+        payload = {
+            'email': email,
+            'exp': datetime.utcnow() + timedelta(days=14)
+        }
+        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+
+        connection.close()
+        return Response({"token": token}, status=status.HTTP_200_OK)
 
 #-------------------メールアドレスを処理するためのクラス-----------------------------------------------
 

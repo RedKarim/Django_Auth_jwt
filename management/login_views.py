@@ -12,6 +12,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .serializers import SecurityCodeSerializer  # Add this import
 from .serializers import LoginSerializer, TokenSerializer
 import jwt
 from django.conf import settings
@@ -311,7 +312,7 @@ class LoginAPIView(APIView):
 
 class VerifySecurityCodeAPIView(APIView):
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer = SecurityCodeSerializer(data=request.data)  # Use SecurityCodeSerializer
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
