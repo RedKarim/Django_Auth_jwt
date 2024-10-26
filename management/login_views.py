@@ -9,6 +9,14 @@ from datetime import datetime
 import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import LoginSerializer, TokenSerializer
+import jwt
+from django.conf import settings
+from datetime import datetime, timedelta
+import MySQLdb
 
 class TopView(TemplateView):
   def __init__(self):
@@ -260,3 +268,85 @@ class LoginSecurityCodeView(TemplateView):
       # Close the connection
       connection.close()
       return render(request, 'auth/login_success.html', self.params)
+    
+    
+class LoginAPIView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        # Connect to the database
+        connection = MySQLdb.connect(
+            host='db',
+            user='root',
+            passwd='team5',
+            db='jmandpf_sns_db'
+        )
+        cursor = connection.cursor()
+
+        # Check if the email and password are correct
+        sql = "SELECT * FROM user_tbl WHERE email = %s AND passwd = %s"
+        cursor.execute(sql, (email, password))
+        user = cursor.fetchone()
+
+        if not user:
+            connection.close()
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Generate and save security code
+        security_code = ''.join([str(random.randint(0,9)) for _ in range(7)])
+        sql = "UPDATE user_tbl SET security_code = %s WHERE email = %s"
+        cursor.execute(sql, (security_code, email))
+        connection.commit()
+
+        # Send security code via email (implement this part)
+        # send_security_code_email(email, security_code)
+
+        connection.close()
+        return Response({"message": "Security code sent"}, status=status.HTTP_200_OK)
+
+class VerifySecurityCodeAPIView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+        security_code = serializer.validated_data['security_code']
+
+        # Connect to the database
+        connection = MySQLdb.connect(
+            host='db',
+            user='root',
+            passwd='team5',
+            db='jmandpf_sns_db'
+        )
+        cursor = connection.cursor()
+
+        # Check if the security code is correct
+        sql = "SELECT * FROM user_tbl WHERE email = %s AND security_code = %s"
+        cursor.execute(sql, (email, security_code))
+        user = cursor.fetchone()
+
+        if not user:
+            connection.close()
+            return Response({"error": "Invalid security code"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Clear the security code
+        sql = "UPDATE user_tbl SET security_code = NULL WHERE email = %s"
+        cursor.execute(sql, (email,))
+        connection.commit()
+
+        # Generate JWT token
+        payload = {
+            'email': email,
+            'exp': datetime.utcnow() + timedelta(days=14)
+        }
+        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+
+        connection.close()
+        return Response({"token": token}, status=status.HTTP_200_OK)
