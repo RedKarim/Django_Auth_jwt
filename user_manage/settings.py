@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'user_manage.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'user_manage_dv',
-        'USER': 'web_weavers',
-        'PASSWORD': 'c6SrEGYv',
-        'HOST': 'db',  # This should be 'db', not 'localhost'
+        'NAME': 'jmandpf_sns_db',
+        'USER': 'root',
+        'PASSWORD': 'team5',
+        'HOST': 'db',
         'PORT': '3306',
     }
 }
@@ -131,13 +131,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'hack2024team5@gmail.com'
-EMAIL_HOST_PASSWORD = 'ulxv snkh yaqd mxsz'
+EMAIL_HOST_PASSWORD = 'grmg cfei dyqu bgtf'
 EMAIL_USE_TLS = True
 
-# セッション管理をキャッシュで行う
+# ッション管理をキャッシュで行う
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
-# セッションの有効期限の設定。単位は「秒」です。
+# セッションの有効期限の設定。単位は「秒」���す。
 SESSION_COOKIE_AGE  = 10800 # セッションを開始してから３時間後にセッションを破棄。
 
 # ブラウザを閉じたらセッションを終了させる。

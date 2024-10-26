@@ -1,3 +1,4 @@
+version: "3.8"
 services:
   web:
     build: .
@@ -6,32 +7,36 @@ services:
     depends_on:
       - db
     environment:
-      - DB_NAME=user_manage_dv
-      - DB_USER=web_weavers
-      - DB_PASSWORD=c6SrEGYv
+      - DB_NAME=jmandpf_sns_db
+      - DB_USER=root
+      - DB_PASSWORD=team5
       - DB_HOST=db
       - DB_PORT=3306
+    command: python manage.py runserver 0.0.0.0:8000
 
   db:
     image: mariadb:10.5
     container_name: mariadb_container
     environment:
-      - MYSQL_DATABASE=user_manage_dv
-      - MYSQL_USER=web_weavers
-      - MYSQL_PASSWORD=c6SrEGYv
-      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=jmandpf_sns_db
+      - MYSQL_ROOT_PASSWORD=team5
+      - MYSQL_ROOT_HOST=%
     volumes:
       - db_data:/var/lib/mysql
-      - ./user_tbl.sql:/docker-entrypoint-initdb.d/user_tbl.sql # Add this line
+      - ./user_tbl.sql:/docker-entrypoint-initdb.d/user_tbl.sql
+    ports:
+      - "3306:3306"
+    command: --init-file /docker-entrypoint-initdb.d/user_tbl.sql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: team5
     ports:
       - "8080:80"
-    environment:
-      - PMA_HOST=db
-      - PMA_USER=root
-      - PMA_PASSWORD=rootpassword
     depends_on:
       - db
 

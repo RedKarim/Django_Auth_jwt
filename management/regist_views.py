@@ -28,10 +28,10 @@ class RegistEmailView(TemplateView):
   def post(self, request):
     # MariaDB(MySQL)へ接続パラメータ
     connection = MySQLdb.connect(
-      host='db',
-      user='web_weavers',
-      passwd='c6SrEGYv',
-      db='user_manage_dv'
+        host='db',
+        user='root',
+        passwd='team5',
+        db='jmandpf_sns_db'
     )
 
     # MariaDB(MySQL)へ接続
@@ -111,10 +111,10 @@ class RegistPassView(TemplateView):
   def post(self, request):
     # MariaDB(MySQL)へ接続パラメータ
     connection = MySQLdb.connect(
-      host='db',
-      user='web_weavers',
-      passwd='c6SrEGYv',
-      db='user_manage_dv'
+        host='db',
+        user='root',
+        passwd='team5',
+        db='jmandpf_sns_db'
     )
 
     # MariaDB(MySQL)へ接続
@@ -198,10 +198,10 @@ class RegistSecurityCodeView(TemplateView):
   def post(self, request):
     # MariaDB(MySQL)へ接続パラメータ
     connection = MySQLdb.connect(
-      host='db',
-      user='web_weavers',
-      passwd='c6SrEGYv',
-      db='user_manage_dv'
+        host='db',
+        user='root',
+        passwd='team5',
+        db='jmandpf_sns_db'
     )
 
     # MariaDB(MySQL)へ接続
