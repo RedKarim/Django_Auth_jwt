@@ -247,7 +247,7 @@ class LoginSecurityCodeView(TemplateView):
 
       payload = {
         'email': request.session['eMail'],
-        'exp': datetime.utcnow() + timedelta(days=1)  # Token expires in 1 day
+        'exp': datetime.utcnow() + timedelta(days=14)  # Token expires in 1 day
       }
       token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
             
