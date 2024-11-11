@@ -8,6 +8,6 @@ RUN apt-get update && apt-get install -y default-libmysqlclient-dev build-essent
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8001
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8001"]

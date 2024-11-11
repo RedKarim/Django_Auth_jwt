@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from .regist_forms import RegistEmailForm , RegistPassForm , RegistSecurityCodeForm
+from .regist_forms import RegistEmailForm, RegistPassForm, RegistSecurityCodeForm
 import MySQLdb
 import random
 from django.core.mail import send_mail
@@ -9,13 +9,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegistrationSerializer, SecurityCodeSerializer, TokenSerializer
-import MySQLdb
-import random
-from django.core.mail import send_mail
 import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
-from .serializers import RegistrationSerializer, SecurityCodeSerializer, TokenSerializer
 
 class RegistrationAPIView(APIView):
     def post(self, request):
@@ -27,7 +23,7 @@ class RegistrationAPIView(APIView):
         password = serializer.validated_data['password']
 
         connection = MySQLdb.connect(
-            host='db',
+            host='db2',
             user='root',
             passwd='team5',
             db='jmandpf_sns_db'
@@ -72,21 +68,23 @@ class VerifyRegistrationAPIView(APIView):
         security_code = serializer.validated_data['security_code']
 
         connection = MySQLdb.connect(
-            host='db',
+            host='db2',
             user='root',
             passwd='team5',
             db='jmandpf_sns_db'
         )
         cursor = connection.cursor()
 
-        # Check if the security code is correct
-        sql = "SELECT * FROM user_tbl WHERE email = %s AND security_code = %s"
+        # Check if the security code is correct and get the user_id
+        sql = "SELECT user_id FROM user_tbl WHERE email = %s AND security_code = %s"
         cursor.execute(sql, (email, security_code))
-        user = cursor.fetchone()
+        result = cursor.fetchone()
 
-        if not user:
+        if not result:
             connection.close()
             return Response({"error": "Invalid security code"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        user_id = result[0]
 
         # Clear the security code and set auth_regist_flag
         sql = "UPDATE user_tbl SET security_code = NULL, auth_regist_flag = 1 WHERE email = %s"
@@ -95,6 +93,7 @@ class VerifyRegistrationAPIView(APIView):
 
         # Generate JWT token
         payload = {
+            'user_id': user_id,
             'email': email,
             'exp': datetime.utcnow() + timedelta(days=14)
         }
@@ -125,7 +124,7 @@ class RegistEmailView(TemplateView):
   def post(self, request):
     # MariaDB(MySQL)へ接続パラメータ
     connection = MySQLdb.connect(
-        host='db',
+        host='db2',
         user='root',
         passwd='team5',
         db='jmandpf_sns_db'
@@ -208,7 +207,7 @@ class RegistPassView(TemplateView):
   def post(self, request):
     # MariaDB(MySQL)へ接続パラメータ
     connection = MySQLdb.connect(
-        host='db',
+        host='db2',
         user='root',
         passwd='team5',
         db='jmandpf_sns_db'
@@ -295,7 +294,7 @@ class RegistSecurityCodeView(TemplateView):
   def post(self, request):
     # MariaDB(MySQL)へ接続パラメータ
     connection = MySQLdb.connect(
-        host='db',
+        host='db2',
         user='root',
         passwd='team5',
         db='jmandpf_sns_db'

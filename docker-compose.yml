@@ -3,18 +3,18 @@ services:
   web:
     build: .
     ports:
-      - "8000:8000"
+      - "8001:8001"
     depends_on:
-      - db
+      - db2
     environment:
       - DB_NAME=jmandpf_sns_db
       - DB_USER=root
       - DB_PASSWORD=team5
-      - DB_HOST=db
+      - DB_HOST=db2
       - DB_PORT=3306
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8001
 
-  db:
+  db2:
     image: mariadb:10.5
     container_name: mariadb_container
     environment:
@@ -32,13 +32,13 @@ services:
     image: phpmyadmin/phpmyadmin
     environment:
       PMA_ARBITRARY: 1
-      PMA_HOST: db
+      PMA_HOST: db2
       PMA_USER: root
       PMA_PASSWORD: team5
     ports:
       - "8080:80"
     depends_on:
-      - db
+      - db2
 
 volumes:
   db_data:

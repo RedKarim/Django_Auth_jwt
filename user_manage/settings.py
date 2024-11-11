@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'jmandpf_sns_db',
         'USER': 'root',
         'PASSWORD': 'team5',
-        'HOST': 'db',
+        'HOST': 'db2',
         'PORT': '3306',
     }
 }
