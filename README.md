@@ -1,5 +1,5 @@
 ﻿# Python_Auth_jwt_RestAPI
-## A python app for user authontication that can be integrated as a microservice to your app to hadnle user authontication and user management. It generates a JWT for each user. It has both API endpoints and simple visual HTML pages as endpoints.https://github.com/RedKarim/Django_Auth_jwt/blob/main/README.md
+## A python app for user authontication that can be integrated as a microservice to your app to hadnle user authontication and user management. It generates a JWT for each user. It has both API endpoints and simple visual HTML pages as endpoints.
 
 ##### API end points: 
 ```bash
